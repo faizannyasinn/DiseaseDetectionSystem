@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Analysis Result - Health Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="result-card">
+            <!-- Header -->
+            <div class="result-header">
+                <i class="material-icons">analytics</i>
+                <h1>Health Analysis Result</h1>
+                <p>Based on your symptoms and vital signs</p>
+            </div>
+
+            <!-- Primary Disease Prediction -->
+            <div class="main-prediction">
+                <h2>Primary Prediction</h2>
+                <div class="prediction-box">
+                    <div class="disease-name">
+                        {{ prediction.disease_name if prediction.disease_name else 'Unknown' }}
+                    </div>
+                    <div class="probability-container">
+                        <div class="probability-bar">
+                            <div class="probability-fill" id="probabilityFill"></div>
+                        </div>
+                        <div class="probability-value">
+                            {{ prediction.probability|default(0) }}% Match
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alternative Diseases -->
+            {% if prediction.alternative_diseases %}
+            <div class="alternative-diseases">
+                <h2>Other Possibilities</h2>
+                <div class="alternatives-grid">
+                    {% for disease in prediction.alternative_diseases %}
+                    <div class="alt-disease-card">
+                        <div class="alt-disease-name">{{ disease.name }}</div>
+                        <div class="alt-probability">{{ disease.probability }}% Match</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Recommendations -->
+            <div class="recommendations">
+                <h2>Recommendations</h2>
+                <div class="recommendation-box">
+                    <p>{{ prediction.recommendation if prediction.recommendation else 'No specific recommendations available.' }}</p>
+                    
+                    {% if prediction.urgency_level == 'high' %}
+                    <div class="urgent-notice">
+                        <i class="material-icons">warning</i>
+                        <div class="urgent-message">
+                            <strong>Seek immediate medical attention</strong>
+                            <p>Your symptoms suggest a condition that requires urgent medical care.</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{{ url_for('check_symptoms') }}" class="btn btn-secondary">
+                    <i class="material-icons">refresh</i>
+                    New Check
+                </a>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                    <i class="material-icons">dashboard</i>
+                    Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            var probabilityFill = document.getElementById('probabilityFill');
+            if(probabilityFill) {
+                var probability = "{{ prediction.probability|default(0) }}";
+                probabilityFill.style.width = probability + '%';
+            }
+        }
+    </script>
+</body>
+</html>

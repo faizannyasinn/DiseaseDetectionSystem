@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Health Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <div class="nav-content">
+            <div class="nav-title">
+                <i class="material-icons">health_and_safety</i>
+                <span>Health Monitor</span>
+            </div>
+            <div class="nav-actions">
+                <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h2>Welcome, {{ patient[2] if patient[2] else 'User' }}</h2>
+            <p>Your Health Dashboard</p>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="{{ url_for('check_symptoms') }}" class="action-card">
+                <i class="material-icons">add_circle</i>
+                <span>New Health Check</span>
+            </a>
+            <a href="#history" class="action-card">
+                <i class="material-icons">history</i>
+                <span>View History</span>
+            </a>
+            <a href="#profile" class="action-card">
+                <i class="material-icons">person</i>
+                <span>Update Profile</span>
+            </a>
+        </div>
+
+        <!-- Recent Health Checks -->
+        <div class="recent-checks">
+            <h3>Recent Health Checks</h3>
+            {% if predictions and predictions|length > 0 %}
+                <div class="checks-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Condition</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for prediction in predictions %}
+                                <tr>
+                                    <td>{{ prediction[0].strftime('%Y-%m-%d') if prediction[0] else 'N/A' }}</td>
+                                    <td>{{ prediction[1] if prediction[1] else 'Unknown' }}</td>
+                                    <td>
+                                        <span class="status">
+                                            {{ 'High Risk' if prediction[2] > 75 else 'Medium Risk' if prediction[2] > 50 else 'Low Risk' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="no-data">No health checks recorded yet.</p>
+                <a href="{{ url_for('check_symptoms') }}" class="btn-primary">Start Health Check</a>
+            {% endif %}
+        </div>
+
+        <!-- Health Tips -->
+        <div class="health-tips">
+            <h3>Health Tips</h3>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <i class="material-icons">water_drop</i>
+                    <h4>Stay Hydrated</h4>
+                    <p>Drink at least 8 glasses of water daily</p>
+                </div>
+                <div class="tip-card">
+                    <i class="material-icons">directions_run</i>
+                    <h4>Stay Active</h4>
+                    <p>30 minutes of daily exercise is recommended</p>
+                </div>
+                <div class="tip-card">
+                    <i class="material-icons">bed</i>
+                    <h4>Get Enough Sleep</h4>
+                    <p>Aim for 7-9 hours of sleep each night</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
