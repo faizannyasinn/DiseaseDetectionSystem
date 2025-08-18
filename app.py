@@ -9,13 +9,13 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.secret_key = '09871234'  # Change this to a random secret key
+app.secret_key = ' '  # Change this to a random secret key
 
 def get_db():
     try:
         conn_str = (
             "Driver={ODBC Driver 17 for SQL Server};"
-            "Server=FAIZAN-PC\\SQL2022;"
+            "Server=your server name;"
             "Database=diseasedetectiondb;"
             "Trusted_Connection=yes;"
             "TrustServerCertificate=yes;"
