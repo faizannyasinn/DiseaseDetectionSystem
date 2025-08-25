@@ -1,100 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check Symptoms - Health Detection System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-</head>
-<body>
-    <div class="container">
-        <div class="symptoms-card">
-            <div class="card-header">
-                <i class="material-icons">medical_services</i>
-                <h2>Check Your Symptoms</h2>
-                <p>Select all symptoms you are experiencing</p>
-            </div>
-
-            <form method="POST" id="symptomsForm">
-                <div class="symptoms-section">
-                    <div class="select-container">
-                        <select class="symptoms-select" name="symptoms[]" multiple="multiple">
-                            {% for symptom in symptoms %}
-                                <option value="{{ symptom[1] }}">{{ symptom[1] }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="selected-symptoms">
-                        <h3>Selected Symptoms:</h3>
-                        <div id="selectedSymptomsList" class="symptoms-tags"></div>
-                    </div>
-
-                    <div class="form-buttons">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="material-icons">search</i>
-                            Analyze Symptoms
-                        </button>
-                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
-                            <i class="material-icons">arrow_back</i>
-                            Back to Dashboard
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        $(document).ready(function() {
-            // Initialize Select2
-            $('.symptoms-select').select2({
-                placeholder: "Type or select symptoms...",
-                tags: true,
-                tokenSeparators: [',', ' '],
-                width: '100%'
-            });
-
-            // Update selected symptoms tags
-            $('.symptoms-select').on('change', function() {
-                let selectedSymptoms = $(this).val();
-                let tagsHtml = '';
-                
-                if(selectedSymptoms) {
-                    selectedSymptoms.forEach(function(symptom) {
-                        tagsHtml += `
-                            <div class="symptom-tag">
-                                <span>${symptom}</span>
-                                <i class="material-icons remove-tag" data-symptom="${symptom}">close</i>
-                            </div>
-                        `;
-                    });
-                }
-                
-                $('#selectedSymptomsList').html(tagsHtml);
-            });
-
-            // Remove tag on click
-            $(document).on('click', '.remove-tag', function() {
-                let symptom = $(this).data('symptom');
-                let currentValues = $('.symptoms-select').val();
-                let newValues = currentValues.filter(v => v !== symptom);
-                $('.symptoms-select').val(newValues).trigger('change');
-            });
-
-            // Form submission
-            $('#symptomsForm').on('submit', function(e) {
-                let selectedSymptoms = $('.symptoms-select').val();
-                if (!selectedSymptoms || selectedSymptoms.length === 0) {
-                    e.preventDefault();
-                    alert('Please select at least one symptom');
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <h2><i class="material-icons">rule</i> Symptom Checker</h2>
+  </div>
+  <div class="card-body">
+    <form method="POST">
+      <div class="symptom-grid">
+        {% for s in symptoms %}
+          <label class="symptom-item">
+            <input type="checkbox" name="symptoms[]" value="{{ s[1] }}">
+            <span>{{ s[1] }}</span>
+          </label>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn btn-primary mt-16">Check Now</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
